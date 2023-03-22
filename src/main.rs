@@ -5,7 +5,7 @@ use std::{thread, time};
 //use std::io::stdin;
 // use rustfft::{FftPlanner, num_complex::Complex};
 
-fn print_frame(bars: &[u32], max_height: u32) {
+fn print_frame_depr(bars: &[u32], max_height: u32) {
     for i in 0..max_height {
         for j in 0..bars.len() {
             if bars[j] <= (max_height as u32)-i {
@@ -24,7 +24,7 @@ fn print_frame(bars: &[u32], max_height: u32) {
     print!("\n");
 }
 
-fn print_frame_at_once(bars: &[u32], max_height: u32) {
+fn build_frame(bars: &[u32], max_height: u32) -> String {
     let mut frame: String = "".to_string();
     for i in 0..max_height {
         for j in 0..bars.len() {
@@ -42,6 +42,10 @@ fn print_frame_at_once(bars: &[u32], max_height: u32) {
     frame.push_str("\n    ");
     frame.push_str("    0Hz        10Hz        100Hz        1kHz        10kHz        100kHz    ");
     frame.push_str("\n");
+    return frame;
+}
+
+fn print_frame(frame: String) {
     print!("{}", frame);
 }
 
@@ -72,7 +76,7 @@ fn main() {
     let mut data_bars: [u32; BAR_WIDTH] = [0 as u32; BAR_WIDTH];
     let mut current_bars: [u32; BAR_WIDTH] = [0 as u32; BAR_WIDTH];
 
-    print_frame(&current_bars, MAX_BAR_HEIGHT);
+    print_frame(build_frame(&current_bars, MAX_BAR_HEIGHT));
 
     for _t in 0..100 {
         let data_instant = time::Instant::now();
@@ -100,7 +104,7 @@ fn main() {
 
             print!("{esc}c", esc = 27 as char);
             //print!("\x1B[2J\n");
-            print_frame_at_once(&current_bars, MAX_BAR_HEIGHT);
+            print_frame(build_frame(&current_bars, MAX_BAR_HEIGHT));
             if frame_instant.elapsed() <= frame_time {
                 thread::sleep(frame_time - frame_instant.elapsed());
             }
